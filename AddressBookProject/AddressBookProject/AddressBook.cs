@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using AddressBookProject.DTO;
-using LoggerProject;
 
 namespace AddressBookProject
 {
     public class AddressBook
     {
-        private readonly ILogger _logger;
         private readonly List<User> _listOfUsers;
-        
-        
-        public AddressBook(ILogger logger)
+           
+        public AddressBook()
         {
-            _logger = logger;
             _listOfUsers = new List<User>();
         }
 
@@ -28,24 +24,25 @@ namespace AddressBookProject
         {
             if (user == null)
             {
-                _logger.Error("[User] is null");
                 throw new ArgumentNullException("user");
             }
 
             if (user.PhoneNumber[0] != '+' && !('0' <= user.PhoneNumber[0] && user.PhoneNumber[0] <= '9'))
             {
-                _logger.Warning("Invalid PhoneNumber");
+                throw new Exception("Invalid PhoneNumber");
             }
             
             for (int i = 1; i < user.PhoneNumber.Length; i++)
             {
                 if (!('0' <= user.PhoneNumber[i] && user.PhoneNumber[i] <= '9'))
                 {
-                    _logger.Warning("Invalid PhoneNumber");
+                    throw new Exception("Invalid PhoneNumber");
                 }
             }
-            
+
+            user.TimeAdded = DateTime.Now.ToString();
             _listOfUsers.Add(user);
+
             if (UserAdded != null)
             {
                 UserAdded(user);
@@ -55,11 +52,20 @@ namespace AddressBookProject
         public void RemoveUser(string id)
         {
             var user = _listOfUsers.FirstOrDefault(u => string.Equals(u.Id, id));
-            if (user != null)
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            try
             {
                 _listOfUsers.Remove(user);
             }
-
+            catch (Exception)
+            {
+                throw new Exception("User not found");
+            }
+                       
             if (UserRemoved != null)
             {
                 UserRemoved(user);

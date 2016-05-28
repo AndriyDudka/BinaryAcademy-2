@@ -6,22 +6,22 @@ namespace LoggerProject
     {
         public void Info(string message)
         {
-            Console.WriteLine("Info. " + message);
+            Console.WriteLine("INFO. " + message);
         }
 
         public void Debug(string log)
         {
-            Console.WriteLine("Debug. " + log);
+            Console.WriteLine("DEBUG. " + log);
         }
 
         public void Warning(string log)
         {
-            Console.WriteLine("Warning. " + log);
+            Console.WriteLine("WARN. " + log);
         }
 
         public void Error(string log)
         {
-            Console.WriteLine("Error. " + log);
+            Console.WriteLine("ERROR. " + log);
         }
 
         public void Dispose() { }

@@ -23,6 +23,7 @@ namespace MainProject
             AddressBook addressBook;
             Program program;
 
+
             var user = new User
             {
                 FirstName = "Andriy",
@@ -35,33 +36,63 @@ namespace MainProject
                 Gender = Gender.Male
 
             };
-
+          
             #region Console Optput test
 
             logger = loggerFactory.CreateLogger(0);
-            addressBook = new AddressBook(logger);
+            addressBook = new AddressBook();
             program = new Program(logger);
 
             addressBook.UserAdded += program.OnUserAddedHandler;
             addressBook.UserRemoved += program.OnUserRemovedHandler;
 
-            addressBook.AddUser(user);
-            addressBook.RemoveUser(user.Id);
+            try
+            {
+                addressBook.AddUser(user);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+            }
+
+            try
+            {
+                addressBook.RemoveUser(user.Id);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+            }
 
             #endregion
 
             #region File Optput test
 
             logger = loggerFactory.CreateLogger(1);
-            addressBook = new AddressBook(logger);
+            addressBook = new AddressBook();
             program = new Program(logger);
 
             addressBook.UserAdded += program.OnUserAddedHandler;
             addressBook.UserRemoved += program.OnUserRemovedHandler;
 
-            addressBook.AddUser(user);
-            addressBook.RemoveUser(user.Id);
+            try
+            {
+                addressBook.AddUser(user);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+            }
 
+            try
+            {
+                addressBook.RemoveUser(user.Id);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+            }
+                      
             #endregion
 
             Console.ReadKey();
