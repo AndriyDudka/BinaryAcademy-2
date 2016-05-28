@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoggerProject
 {
-    public interface ILogger
+    public interface ILogger : IDisposable
     {
-        void Info(string text);
-        void Debug();
-        void Warning();
-        void Error();
+        void Info(string message);
+        void Debug(string log);
+        void Warning(string log);
+        void Error(string log);
     }
 }

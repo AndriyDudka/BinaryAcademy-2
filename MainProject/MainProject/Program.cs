@@ -1,23 +1,96 @@
-﻿using AddressBookProject;
+﻿using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using AddressBookProject;
+using AddressBookProject.DTO;
 using LoggerProject;
 
 namespace MainProject
 {
-    internal class Program
+    public class Program
     {
-        private static void Main()
+        public static void Main()
         {
-            AddressBook addressBook = new AddressBook();
-            ILogger logger = new ConsoleLogger(); 
+            var dir = Directory.GetCurrentDirectory();
+            var match = Regex.Match(dir, "(\\\\bin\\\\(Debug|Release))");
+            if (match.Success)
+            {
+                dir = dir.Replace(match.Value, String.Empty);
+            }
+            var loggerFactory = new LoggerFactory(dir + "\\Log\\Log.txt");
 
-            addressBook.UserAdded += logger.Info;
-            addressBook.UserRemoved += logger.Info;
+            ILogger logger;
+            AddressBook addressBook;
+            Program program;
 
-            addressBook.AddUser(new User("Dudka", "Andriy", "01.05.94", "Uzhgorod", "Bestuzina 12/7", "+380668839420",
-                "Male", "andriy.dudka@gmail.com"));
+            var user = new User
+            {
+                FirstName = "Andriy",
+                LastName = "Dudka",
+                Address = "Bestuzina 12/7",
+                Birthdate = new DateTime(1994, 5, 1),
+                PhoneNumber = "+380668839420",
+                Email = "andriy.dudka@gmail.com",
+                City = "Uzhgorod",
+                Gender = Gender.Male
 
-            addressBook.RemoveUser(0);
-            addressBook.RemoveUser(0);
+            };
+
+            #region Console Optput test
+
+            logger = loggerFactory.CreateLogger(0);
+            addressBook = new AddressBook(logger);
+            program = new Program(logger);
+
+            addressBook.UserAdded += program.OnUserAddedHandler;
+            addressBook.UserRemoved += program.OnUserRemovedHandler;
+
+            addressBook.AddUser(user);
+            addressBook.RemoveUser(user.Id);
+
+            #endregion
+
+            #region File Optput test
+
+            logger = loggerFactory.CreateLogger(1);
+            addressBook = new AddressBook(logger);
+            program = new Program(logger);
+
+            addressBook.UserAdded += program.OnUserAddedHandler;
+            addressBook.UserRemoved += program.OnUserRemovedHandler;
+
+            addressBook.AddUser(user);
+            addressBook.RemoveUser(user.Id);
+
+            #endregion
+
+            Console.ReadKey();
+        }
+
+
+        private readonly ILogger _logger;
+
+        Program(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        void OnUserAddedHandler(User user)
+        {
+            _logger.Info(
+                    string.Format("Successfully added user: {0}", user.Id));
+        }
+
+        void OnUserRemovedHandler(User user)
+        {
+            if (user == null)
+            {
+                _logger.Warning("User not found");
+                return;
+            }
+
+            _logger.Info(
+                string.Format("Successfully removed user: {0}", user.Id));
         }
     }
 }
